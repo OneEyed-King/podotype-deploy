@@ -1,16 +1,54 @@
-# owl-trace
+# Podotype
 
 Self-hosted observability for a Docker Compose stack — service health, request
 tracing (via eBPF, zero code changes), and logs, in one dashboard, running
-entirely on your own machine.
+entirely on your own machine. (Formerly called "owl-trace" during early
+development — same project, renamed before launch.)
 
-This repo is just the install file and instructions. It exists so you can spin
-up owl-trace with a single command, without cloning the actual source.
+## What's in this repo, and what isn't
+
+This repo is intentionally just the install files (Docker Compose configs),
+this README, and screenshots — not the application source. Podotype is a
+pre-revenue, pre-launch product built by a solo developer, and the full
+source includes licensing/billing logic for the paid tiers, not just the
+app itself, so it's staying private until launch.
+
+What you *can* do from this repo alone:
+- Read exactly how it's deployed (`docker-compose.yaml` /
+  `docker-compose.demo.yaml` — nothing hidden there)
+- Run the actual live product yourself via the public demo command below —
+  not a video, not a sandbox, the real thing
+- See what it looks like without running anything, via the screenshots
+  further down
+
+If you're reviewing this for a "show me it's real, not vapor" check — the
+demo command below spins up the actual running product from public images
+in under two minutes, which is the honest substitute for source access here.
 
 Licensed under the [Elastic License 2.0](./LICENSE) — you can self-host and
-use owl-trace freely, including for internal production use; you just can't
+use Podotype freely, including for internal production use; you just can't
 offer it to others as a hosted/managed service. See `LICENSE` for the full
 terms.
+
+## Screenshots
+
+**Fleet overview** — health/incident summary across watched services:
+![Overview](screenshots/overview.jpg)
+
+**Per-service detail** — request rate, error rate, and p50/p95/p99 latency,
+captured automatically with zero code changes:
+![Service detail](screenshots/service-detail.jpg)
+
+**Service map** — who calls whom, built from real observed traffic:
+![Service map](screenshots/service-map.jpg)
+
+**Trace waterfall** — a single slow request's full call path across services,
+with the slowest span flagged:
+![Trace waterfall](screenshots/trace-waterfall.jpg)
+
+**Ad-hoc SQL console** — query your own traces/logs/metrics directly when the
+built-in views aren't enough:
+![SQL console](screenshots/sql-console.jpg)
 
 ## Requirements
 
@@ -22,7 +60,7 @@ terms.
 
 ## Try it now — public demo (no login, 10-day trial)
 
-The fastest way to see owl-trace running — public images, no `docker login`:
+The fastest way to see Podotype running — public images, no `docker login`:
 
 ```bash
 curl -fsS https://raw.githubusercontent.com/OneEyed-King/owl-trace-deploy/main/docker-compose.demo.yaml \
@@ -101,18 +139,18 @@ Grafana at it, see the note at the bottom of `docker-compose.yaml`.
 
 ## Data & privacy
 
-Everything owl-trace collects — traces, logs, container metrics — stays in
+Everything Podotype collects — traces, logs, container metrics — stays in
 the ClickHouse container running on your own host. Nothing is sent to us
 (Observingowl Studios) or any third party by default.
 
 Two honest exceptions, both entirely under your control:
 
 - **Alert notifications** — if you configure a Telegram bot or a webhook URL
-  in the alerts settings, owl-trace will send messages *there* when something
+  in the alerts settings, Podotype will send messages *there* when something
   trips an alert. That's a destination you chose, not a hidden default.
 - **Optional instrumentation agents** — if you opt a specific service into
   full OpenTelemetry auto-instrumentation (a separate, deeper tracing mode
-  than Beyla's default eBPF capture), owl-trace downloads the relevant public
+  than Beyla's default eBPF capture), Podotype downloads the relevant public
   OpenTelemetry agent jar/package from GitHub's own release URLs the first
   time you turn that on. That's a one-time *download*, not anything being
   sent out.
@@ -143,7 +181,7 @@ misconfiguration.
 
 ## Accessing it remotely
 
-Running owl-trace on a VPS/cloud box instead of your laptop? Docker
+Running Podotype on a VPS/cloud box instead of your laptop? Docker
 publishing a port (what this compose file does) is separate from your
 provider's firewall — both have to allow it.
 
@@ -173,7 +211,7 @@ docker compose -p owl-trace down -v --rmi all
 ```
 
 - `-v` removes the named volumes — this is what actually frees the
-  ClickHouse data and owl-trace's own state, not just `down` alone.
+  ClickHouse data and Podotype's own state, not just `down` alone.
 - `--rmi all` removes all four images referenced by the compose file.
 
 If Beyla's container refuses to stop (`container ... PID ... is zombie and
@@ -185,7 +223,7 @@ docker rm -f owl-trace-beyla
 docker compose -p owl-trace down -v --rmi all
 ```
 
-Verify nothing owl-trace-related is left:
+Verify nothing Podotype-related is left:
 
 ```bash
 docker ps -a --filter "label=com.docker.compose.project=owl-trace"
